@@ -110,7 +110,19 @@ data class OptionT<F, A>(val MF: Monad<F>, val value: HK<F, Option<A>>) : Option
             FF.compose(Option).foldRC(value, lb, f)
 
     fun <G, B> traverse(f: (A) -> HK<G, B>, GA: Applicative<G>, FF: Traverse<F>, MF: Monad<F>): HK<G, HK<OptionTF<F>, B>> {
-        val fa = ComposedTraverse(FF, Option, Option).traverseC(value, f, GA)
+        //val fa = ComposedTraverse(FF, Option, Option).traverseC(value, f, GA)
+        //TODO Attempt to fix OptionT.kt: (113, 18): Cannot use 'F' as reified type parameter. Use a class instead.
+        val fa = object : ComposedTraverse<F, G> {
+            override fun FF() = FF
+
+            override fun GF() =
+
+            override fun FT() =
+
+            override fun GT() =
+
+            override fun GA() = GA
+        }.traverseC(value, f, GA)
         return GA.map(fa, { OptionT(MF, MF.map(it.lower(), { it.ev() })) })
     }
 

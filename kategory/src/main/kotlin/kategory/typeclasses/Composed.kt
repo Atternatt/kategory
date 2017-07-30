@@ -33,8 +33,12 @@ interface ComposedFoldable<in F, in G> :
             foldR(fa.lift(), lb, f)
 
     companion object {
-        inline operator fun <reified F, reified G> invoke(FF: Foldable<F> = foldable<F>(), GF: Foldable<G> = foldable<G>()): kategory.ComposedFoldable<F, G> =
-                kategory.ComposedFoldable(FF, GF)
+        operator fun <F, G> invoke(FF: Foldable<F>, GF: Foldable<G>): ComposedFoldable<F, G> =
+                object : ComposedFoldable<F, G> {
+                    override fun FF(): Foldable<F> = FF
+
+                    override fun GF(): Foldable<G> = GF
+                }
     }
 }
 

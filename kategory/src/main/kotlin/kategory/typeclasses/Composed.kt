@@ -62,8 +62,21 @@ interface ComposedTraverse<F, G> :
             traverse(fa.lift(), f, HA)
 
     companion object {
-        inline operator fun <reified F, reified G> invoke(FF: Traverse<F> = traverse<F>(), GF: Traverse<G> = traverse<G>(), GA: Applicative<G> = applicative<G>()): ComposedTraverse<F, G> =
-                ComposedTraverse(FF, GF, GA)
+        operator fun <F, G> invoke(
+                FF: Traverse<F>,
+                GF: Traverse<G>,
+                GA: Applicative<G>): ComposedTraverse<F, G> =
+                object : ComposedTraverse<F, G> {
+                    override fun FF(): Foldable<F> = FF
+
+                    override fun GF(): Foldable<G> = GF
+
+                    override fun FT(): Traverse<F> = FF
+
+                    override fun GT(): Traverse<G> = GF
+
+                    override fun GA(): Applicative<G> = GA
+                }
     }
 }
 
